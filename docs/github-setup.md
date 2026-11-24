@@ -1,4 +1,4 @@
-# GitHub 學習日誌設定教學
+# GitHub 學習日誌：用指令上傳
 
 ## 先懂三個詞
 - **Repository（repo）**：放在 GitHub 上的專案資料夾
@@ -7,20 +7,32 @@
 
 每天 commit，GitHub 個人頁的格子就會變綠，這就是「過程」。
 
-## 設定步驟
+## 已經設定好的
+- 這個資料夾已經是 git repo，連到 GitHub 上的公開 repo `data-analysis-journey`
+- commit 用 GitHub 的 noreply email，真實 email 不會公開
+- `.gitignore` 裡列的檔案（例如 `private/`）不會被上傳
 
-1. **註冊**：github.com，帳號用看起來專業的名字（例如名字拼音），之後會寫在履歷上。
-2. **安裝 GitHub Desktop**：desktop.github.com，登入帳號。先用圖形介面，熟了再學 VS Code 裡的 git 指令。
-3. **把「數據分析」資料夾變成 repo**：
-   - File → Add local repository → 選桌面上的 `數據分析` 資料夾
-   - 提示還不是 repo → 按 create a repository，名字取英文（例如 `data-analysis-journey`）
-   - 按 Publish repository：公開（可放履歷，所有人看得到）或私人（只有自己看，之後可改）
+## 每天上傳（2 行指令）
 
-## 每天上傳（3 個動作）
+在這個資料夾打開 PowerShell（VS Code 的終端機也可以），執行：
 
-1. 打開 GitHub Desktop，左邊會列出今天改過的檔案
-2. 左下 Summary 寫：`Day 1: Kaggle Python L1`
-3. 按 **Commit to main**，再按上方 **Push origin**
+```powershell
+git add -A; git commit -m "Day 2: Kaggle Python L2"
+```
+
+```powershell
+git push
+```
+
+- `git add -A`：把今天新增、修改的檔案都放進這次 commit
+- `git commit -m "..."`：存檔，引號裡寫今天做了什麼，格式 `Day N: 做了什麼`
+- `git push`：上傳到 GitHub
+
+上傳前想確認會傳哪些檔案，可以先執行 `git status`。
+
+## 常見狀況
+- **`nothing to commit`**：今天沒有改任何檔案，先寫日誌或存練習再 commit
+- **跳出 GitHub 登入**：用自己的 GitHub 帳號登入並按授權，之後就會記住
 
 ## 注意
 
