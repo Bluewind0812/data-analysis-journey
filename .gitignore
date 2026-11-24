@@ -1,0 +1,20 @@
+# 只留在本機、不上 GitHub 的筆記
+private/
+CLAUDE.md
+
+# Python
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+
+# Excel 暫存檔
+~$*.xlsx
+~$*.xls
+
+# Power BI 暫存
+*.pbix.bak
+
+# 系統
+.DS_Store
+Thumbs.db
+desktop.ini

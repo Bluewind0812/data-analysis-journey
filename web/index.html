@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>數據分析實習準備</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Outfit:wght@500;700&family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;600;800&family=Bungee&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday: a study planner, calm and clear
+   IDEA a student's 手帳 year-planner page, one cell per day, filled in with highlighter as you go
+   PICTURE the 128-day grid (weeks x weekdays), cells coloured by skill, solid when done
+   COLOUR cobalt band, white page, one colour per skill, yellow highlighter for today
+   TYPE Noto Sans TC 900/700 + Outfit for numbers
+   LAYOUT band with title and progress; grid full width; today card; phases as lists; resources */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10141c);--ink:light-dark(#141a22,#e9edf3);--mute:light-dark(#5d6674,#9aa4b2);--line:light-dark(#e3e6eb,#252d3a);--panel:light-dark(#f5f6f8,#171d28);--band:light-dark(#1f3fbf,#16267a);--hl:#ffd23f;--sql:#3d7bff;--excel:#1d8a4e;--py:#e0a100;--np:#4d77cf;--pbi:#8a4fff;--viz:#129a9a;--proj:#e5532d;--job:light-dark(#3a3f47,#c3c9d2);--rest:light-dark(#eceef1,#222936);--fd:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--fb:var(--fd);--fn:Outfit,"Noto Sans TC",sans-serif;--r:14px;--rs:10px;--bw:1px;--edge:var(--line);--sh:none;--hdr:var(--band);--bandink:#fff}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:24px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--fb);overflow-x:clip}
+a{color:inherit}
+.band{padding-block:clamp(24px,4vw,48px);padding-inline:max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.top{background:var(--hdr);color:var(--bandink)}
+.top .wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end}
+h1{font-family:var(--fd);font-weight:900;font-size:clamp(32px,5vw,48px);line-height:1.1;letter-spacing:-.02em;margin:0 0 8px;text-wrap:balance}
+.top p{margin:0;opacity:.88;max-width:40em}
+.score{text-align:right}
+.score b{font:700 clamp(44px,7vw,72px)/1 var(--fn);display:block}
+.score span{opacity:.85}
+.meter{height:10px;background:color-mix(in srgb,var(--bandink) 22%,transparent);border-radius:6px;margin-top:20px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--hl);width:0;transition:width .4s}
+.gridwrap{overflow-x:auto;padding-bottom:4px}
+.months,.cal{display:grid;grid-template-columns:28px repeat(var(--w),minmax(14px,1fr));gap:4px;min-width:340px}
+.months{font-size:13px;color:var(--mute);margin-bottom:4px}
+.cal{grid-template-rows:repeat(7,minmax(14px,26px));grid-auto-flow:column}
+.wd{font-size:13px;color:var(--mute);display:flex;align-items:center}
+.cell{border:0;border-radius:4px;padding:0;cursor:pointer;background:color-mix(in srgb,var(--c) 22%,var(--bg))}
+.cell.done{background:var(--c)}
+.cell.rest{background:var(--rest)}
+.cell.exam{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--band) 35%,var(--bg)) 0 3px,var(--bg) 3px 6px)}
+.cell.today{outline:3px solid var(--hl);outline-offset:1px}
+.cell.fri{box-shadow:inset 0 0 0 3px var(--bg),inset 0 0 0 5px var(--ink)}
+.tag.econ{background:var(--band);color:#fff}
+.enote{margin:6px 0;padding:6px 10px;border-left:4px solid var(--band);background:var(--bg);font-weight:500}
+.econ-sec ol{margin:0;padding-left:1.3em}.econ-sec li{margin:6px 0}
+.dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:0 0 20px}
+.dl div{background:var(--bg);border:var(--bw) solid var(--edge);border-radius:var(--r);box-shadow:var(--sh);padding:14px 16px}
+.dl b{font:700 26px/1.1 var(--fn);display:block}
+.cell:focus-visible{outline:3px solid var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:16px;font-size:14px;color:var(--mute)}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--c);margin-right:6px;vertical-align:-1px}
+.today{border-radius:14px}
+#todayCard{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:20px;align-items:center;background:var(--panel);border:var(--bw) solid var(--edge);border-radius:var(--r);box-shadow:var(--sh);padding:20px 24px}
+#todayCard .d{font:700 40px/1 var(--fn);white-space:nowrap}
+#todayCard .d small{display:block;font:500 14px "Noto Sans TC",sans-serif;color:var(--mute);margin-top:6px}
+#todayCard h2{font-size:22px;line-height:1.35;margin:4px 0}
+.tag{display:inline-block;font-size:13px;font-weight:700;color:#fff;background:var(--c);border-radius:999px;padding:1px 10px}
+.tag.job{color:var(--bg)}
+.btn{font:inherit;font-size:16px;min-height:44px;padding:8px 18px;border-radius:var(--rs);border:2px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.btn.on{background:var(--ink);color:var(--bg)}
+.btn:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.acts{display:flex;flex-direction:column;gap:8px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.bar label{display:flex;gap:8px;align-items:center;min-height:44px;cursor:pointer}
+.bar input{width:20px;height:20px}
+section.ph{border-top:1px solid var(--line);padding-top:24px;margin-top:24px}
+.ph h3{font-size:24px;line-height:1.3;margin:0}
+.ph .sub{color:var(--mute);margin:4px 0 12px}
+.pbar{height:6px;background:var(--rest);border-radius:4px;overflow:hidden;max-width:360px;margin-bottom:12px}
+.pbar i{display:block;height:100%;background:var(--ink)}
+ol.days{list-style:none;margin:0;padding:0}
+.day{display:grid;grid-template-columns:5.2em 44px minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 6px;border-bottom:1px solid var(--line)}
+.day.now{background:color-mix(in srgb,var(--hl) 30%,var(--bg))}
+.day .dt{font:500 15px var(--fn);white-space:nowrap}
+.day .dt small{color:var(--mute);margin-left:4px;font-family:"Noto Sans TC",sans-serif}
+.day .tx{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.day .min{color:var(--mute);font-size:14px;white-space:nowrap}
+.day .rs{font-size:14px;white-space:nowrap}
+.day.r .tx{color:var(--mute)}
+.day.ok .tt{text-decoration:line-through;text-decoration-color:var(--mute);color:var(--mute)}
+.ck{width:44px;height:44px;border-radius:var(--rs);border:2px solid var(--c);background:var(--bg);cursor:pointer;display:grid;place-items:center;padding:0}
+.ck svg{width:22px;height:22px;opacity:0}
+.ck.on{background:var(--c)}.ck.on svg{opacity:1}
+.ck:focus-visible{outline:3px solid var(--hl)}
+.hide-rest .day.r{display:none}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.rc{border:var(--bw) solid var(--edge);border-top:5px solid var(--c);border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;background:var(--panel)}
+.rc h4{margin:0 0 8px;font-size:18px}
+.rc ul{margin:0;padding-left:1.1em}
+.rc li{margin:6px 0}
+.rule{background:var(--band);color:#fff;border-radius:var(--r);padding:20px 24px;margin-top:20px;display:grid;gap:4px}
+.rule b{font-size:20px}
+footer{color:var(--mute);font-size:14px}
+h1,.score b{font-family:var(--fd)}
+.score b{font-family:var(--fn)}
+.sty{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.sty button{font:inherit;font-size:15px;min-height:44px;padding:4px 16px;border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:var(--rs);cursor:pointer}
+.sty button[aria-pressed=true]{background:var(--bandink);color:var(--hdr)}
+.sty button:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+/* 科技風 */
+:root[data-style=tech]{color-scheme:dark;--bg:#070b10;--ink:#d9f4ff;--mute:#7c93a6;--line:#16303f;--panel:#0c141c;--band:#00b8d9;--hdr:#070b10;--bandink:#d9f4ff;--hl:#00ffa3;--sql:#2f8bff;--excel:#00d68f;--py:#ffd60a;--np:#7aa2ff;--pbi:#b388ff;--viz:#00e5ff;--proj:#ff4d6d;--job:#9fb3c8;--rest:#121c26;--fd:"JetBrains Mono","Noto Sans TC",monospace;--fn:"JetBrains Mono",monospace;--r:4px;--rs:4px;--edge:#1f4357;--sh:0 0 24px rgba(0,229,255,.08)}
+:root[data-style=tech] .top{background-image:linear-gradient(rgba(0,229,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.07) 1px,transparent 1px);background-size:24px 24px;border-bottom:1px solid #1f4357}
+:root[data-style=tech] h1{font-weight:700;letter-spacing:-.01em}
+:root[data-style=tech] h1::before{content:"> ";color:var(--band)}
+:root[data-style=tech] .meter i{box-shadow:0 0 12px var(--hl)}
+:root[data-style=tech] .btn{border-color:var(--band);color:var(--band)}
+:root[data-style=tech] .btn.on{background:var(--band);color:#001018}
+:root[data-style=tech] .tag.econ{color:#001018}
+:root[data-style=tech] .rule{background:#0c141c;border:1px solid var(--band);color:var(--ink)}
+:root[data-style=tech] .sty button[aria-pressed=true]{background:var(--band);color:#001018;border-color:var(--band)}
+/* 蘋果風 */
+:root[data-style=apple]{--bg:light-dark(#ffffff,#000000);--ink:light-dark(#1d1d1f,#f5f5f7);--mute:light-dark(#6e6e73,#a1a1a6);--line:light-dark(#e8e8ed,#2c2c2e);--panel:light-dark(#f5f5f7,#1c1c1e);--band:#0071e3;--hdr:light-dark(#f5f5f7,#1c1c1e);--bandink:light-dark(#1d1d1f,#f5f5f7);--hl:#ffcc00;--sql:#0a84ff;--excel:#30d158;--py:#ff9f0a;--np:#5e5ce6;--pbi:#bf5af2;--viz:#64d2ff;--proj:#ff453a;--job:#8e8e93;--rest:light-dark(#f2f2f7,#1c1c1e);--fd:Inter,-apple-system,"Noto Sans TC",sans-serif;--fb:-apple-system,BlinkMacSystemFont,Inter,"Noto Sans TC",sans-serif;--fn:Inter,-apple-system,sans-serif;--r:22px;--rs:980px;--bw:0px;--sh:0 4px 24px rgba(0,0,0,.07)}
+:root[data-style=apple] h1{font-weight:800;letter-spacing:-.035em}
+:root[data-style=apple] .btn{border:0;background:var(--band);color:#fff}
+:root[data-style=apple] .btn.on{background:var(--ink);color:var(--bg)}
+:root[data-style=apple] .meter{background:var(--line);height:6px}
+:root[data-style=apple] .meter i{background:var(--band)}
+:root[data-style=apple] .rc{border-top:0;background:var(--bg)}
+:root[data-style=apple] .rc h4::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c);margin-right:8px}
+:root[data-style=apple] .ck{border-radius:50%}
+:root[data-style=apple] .cell{border-radius:6px}
+:root[data-style=apple] .sty button{border:0;background:var(--line)}
+:root[data-style=apple] .sty button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+/* 普普風 */
+:root[data-style=pop]{color-scheme:light;--bg:#ffffff;--ink:#111111;--mute:#3a3a3a;--line:#111111;--panel:#fff6c7;--band:#ff2e88;--hdr:#ffe14d;--bandink:#111111;--hl:#00d1ff;--sql:#2a5bff;--excel:#00b85c;--py:#ffb800;--np:#3d5afe;--pbi:#9b5de5;--viz:#00c2d1;--proj:#ff3b30;--job:#111111;--rest:#eeeeee;--fd:"Noto Sans TC",sans-serif;--fn:Bungee,"Noto Sans TC",sans-serif;--r:0px;--rs:0px;--bw:3px;--edge:#111111;--sh:6px 6px 0 #111111}
+:root[data-style=pop] .top{background-image:radial-gradient(rgba(255,46,136,.35) 1.6px,transparent 1.9px);background-size:14px 14px;border-bottom:4px solid #111}
+:root[data-style=pop] h1{text-shadow:3px 3px 0 #ff2e88}
+:root[data-style=pop] .meter{background:#fff;border:3px solid #111;height:20px;border-radius:0}
+:root[data-style=pop] .meter i{background:#ff2e88}
+:root[data-style=pop] .btn{border:3px solid #111;box-shadow:4px 4px 0 #111;font-weight:700}
+:root[data-style=pop] .btn.on{background:#ff2e88;color:#fff}
+:root[data-style=pop] .cell{border:2px solid #111;border-radius:0}
+:root[data-style=tech] .cell{border-radius:2px}
+:root[data-style=pop] .ck,:root[data-style=pop] .tag{border:2px solid #111}
+:root[data-style=pop] .rule{background:#2a5bff;border:3px solid #111;box-shadow:6px 6px 0 #111}
+:root[data-style=pop] .day.now{background:#d6f6ff}
+:root[data-style=pop] .sty button{border:3px solid #111;background:#fff;font-weight:700}
+:root[data-style=pop] .sty button[aria-pressed=true]{background:#ff2e88;color:#fff}
+@media(max-width:700px){.top .wrap{grid-template-columns:1fr}.score{text-align:left}#todayCard{grid-template-columns:1fr}.acts{flex-direction:row;flex-wrap:wrap}}
+@media(max-width:600px){.day{grid-template-columns:4.6em 44px minmax(0,1fr)}.day .rs{grid-column:3}}
+@media(prefers-reduced-motion:reduce){.meter i{transition:none}}
+</style>
+</head>
+<body>
+<header class="top band"><div class="wrap">
+  <div class="sty" role="group" aria-label="選擇風格"><button data-s="">原版</button><button data-s="tech">科技風</button><button data-s="apple">蘋果風</button><button data-s="pop">普普風</button></div>
+  <div>
+    <h1>數據分析實習準備計畫</h1>
+    <p>2026/11/24 到 2027/3/31，每天一個小進度。目標：2027 暑期數據分析實習。</p>
+  </div>
+  <div class="score"><b id="pct">0%</b><span id="cnt">完成 0 / 0 個任務</span></div>
+</div><div class="wrap"><div class="meter"><i id="meter"></i></div></div></header>
+
+<main>
+<div class="band"><div class="wrap">
+  <div class="gridwrap"><div class="months" id="months"></div><div class="cal" id="cal"></div></div>
+  <div class="legend" id="legend"></div>
+</div></div>
+
+<div class="band" style="padding-top:0"><div class="wrap">
+  <div id="todayCard"></div>
+</div></div>
+
+<div class="band" style="padding-top:0"><div class="wrap" id="listWrap">
+  <div class="bar">
+    <a class="btn" href="#now" id="jump">跳到今天</a>
+    <label><input type="checkbox" id="hideRest"> 隱藏期末考準備週</label>
+  </div>
+  <div id="phases"></div>
+</div></div>
+
+
+<div class="band" style="background:var(--panel)"><div class="wrap">
+  <h3 style="font-size:28px;margin:0 0 6px">去哪裡學</h3>
+  <p style="margin:0 0 18px;color:var(--mute)">都是免費資源。Kaggle 和 SQLBolt 是英文，但句子簡單，邊做邊查就好。</p>
+  <div class="res" id="res"></div>
+  <div class="rule"><b>學會的標準</b><span>關掉 AI 和筆記，自己寫得出來、講得出來，才算學會。卡住時可以問 Claude，但請它解釋觀念，不要直接給答案。</span></div>
+</div></div>
+</main>
+
+<footer class="band"><div class="wrap">勾選紀錄只存在你現在用的這個瀏覽器。換裝置或清除瀏覽資料，勾選就會不見。</div></footer>
+
+<script>
+{
+const CAT={sql:{n:'SQL',c:'var(--sql)'},excel:{n:'Excel',c:'var(--excel)'},py:{n:'Python',c:'var(--py)'},np:{n:'NumPy',c:'var(--np)'},pbi:{n:'Power BI',c:'var(--pbi)'},viz:{n:'視覺化',c:'var(--viz)'},proj:{n:'作品專案',c:'var(--proj)'},job:{n:'求職',c:'var(--job)'},rest:{n:'休息',c:'var(--rest)'},exam:{n:'期末考準備',c:'var(--band)'}};
+const RES={
+  sqlbolt:{n:'SQLBolt',u:'https://sqlbolt.com/',cat:'sql',note:'互動式 SQL 入門，每課 10–20 分鐘，從第 1 課照順序做'},
+  leetcode:{n:'LeetCode SQL 50',u:'https://leetcode.com/studyplan/top-sql-50/',cat:'sql',note:'面試常見題型，Easy 題先做'},
+  ksql:{n:'Kaggle：Intro to SQL',u:'https://www.kaggle.com/learn/intro-to-sql',cat:'sql',note:'選讀：用真實大資料練 SQL'},
+  excel:{n:'Microsoft Excel 說明與學習',u:'https://support.microsoft.com/zh-tw/excel',cat:'excel',note:'官方中文教學，查函數和樞紐分析'},
+  exceljet:{n:'Exceljet',u:'https://exceljet.net/',cat:'excel',note:'函數範例最清楚，忘記用法就查'},
+  wage:{n:'計量資料夾的 WAGE1',u:'',cat:'excel',note:'用你電腦作業的 Data Sets- Excel 練習，不用另外找資料'},
+  kpy:{n:'Kaggle：Python',u:'https://www.kaggle.com/learn/python',cat:'py',note:'7 課，每課有練習，直接在瀏覽器寫'},
+  kpd:{n:'Kaggle：Pandas',u:'https://www.kaggle.com/learn/pandas',cat:'py',note:'6 課，學會讀資料、篩選、分組'},
+  sm:{n:'計量資料夾的 README',u:'',cat:'py',note:'第 4 節是 statsmodels 指令對照表，第 5 節是常見錯誤'},
+  smdoc:{n:'statsmodels 官方文件',u:'https://www.statsmodels.org/stable/index.html',cat:'py',note:'查 OLS、t_test、f_test 的用法'},
+  hw:{n:'你的計量作業',u:'',cat:'py',note:'電腦作業 1 的 notebook，拿來逐行讀懂，再自己重寫'},
+  numpy:{n:'NumPy 官方入門',u:'https://numpy.org/doc/stable/user/absolute_beginners.html',cat:'np',note:'英文，從建立陣列到基本運算，一頁看完'},
+  pbistart:{n:'Power BI Desktop 快速入門',u:'https://learn.microsoft.com/zh-tw/power-bi/fundamentals/desktop-getting-started',cat:'pbi',note:'官方中文教學。Power BI Desktop 是免費的 Windows 程式，可從 Microsoft Store 安裝'},
+  pbidocs:{n:'Power BI 官方文件',u:'https://learn.microsoft.com/zh-tw/power-bi/',cat:'pbi',note:'Power Query、視覺效果、DAX 都在這裡查'},
+  kviz:{n:'Kaggle：Data Visualization',u:'https://www.kaggle.com/learn/data-visualization',cat:'viz',note:'用 seaborn 畫折線、長條、散布、熱圖'},
+  datagov:{n:'政府資料開放平臺',u:'https://data.gov.tw/',cat:'proj',note:'找專案資料：房價、人口、交通、消費'},
+  stat:{n:'中華民國統計資訊網',u:'https://www.stat.gov.tw/',cat:'proj',note:'主計總處的物價、薪資、GDP'},
+  cbc:{n:'中央銀行',u:'https://www.cbc.gov.tw/',cat:'proj',note:'利率、貨幣供給，可以和貨銀結合'},
+  github:{n:'GitHub',u:'https://github.com/',cat:'proj',note:'放作品集，附在履歷上'},
+  job104:{n:'104 人力銀行',u:'https://www.104.com.tw/',cat:'job',note:'搜「數據分析實習」「商業分析實習」「研究助理」'}
+};
+const L=[];
+const add=(d,c,t,m,r)=>L.push({d,c,t,m:m||0,r:r||''});
+const rest=(a,b,t)=>{let x=new Date(ds(a)),e=new Date(ds(b));while(x<=e){L.push({d:md(x),c:'rest',t,m:0,r:''});x.setDate(x.getDate()+1)}};
+function ds(k){const[m]=k.split('-').map(Number);return (m>=11?'2026-':'2027-')+k+'T00:00:00'}
+function md(x){return String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
+add('11-24','py','Kaggle Python 第 1 課：Hello, Python（變數、算式）。照 docs/github-setup.md 把資料夾設成 GitHub repo，從 Day 1 開始 commit',45,'kpy');
+add('11-25','py','Kaggle Python 第 2 課前半：函式（今天手寫作業優先）',20,'kpy');
+add('11-26','py','做完 Kaggle Python 第 2 課（今晚手寫作業 3 截止）',20,'kpy');
+add('11-27','py','Kaggle Python 第 3 課：布林值與條件判斷',30,'kpy');
+add('11-28','py','Kaggle Python 第 4 課：List',30,'kpy');
+add('11-29','py','Kaggle Python 第 5 課：迴圈與 list comprehension',35,'kpy');
+add('11-30','py','Kaggle Python 第 6 課：字串與 dict',35,'kpy');
+add('12-01','py','Kaggle Python 第 7 課：使用外部套件（import 在做什麼）',30,'kpy');
+add('12-02','np','NumPy：建立陣列、shape、dtype',35,'numpy');
+add('12-03','np','NumPy：索引、切片、向量化運算（今晚電腦作業 1 截止）',35,'numpy');
+add('12-04','np','NumPy：mean、std、矩陣乘法。挑戰：用 (X\'X)⁻¹X\'y 手算 OLS 係數，和 statsmodels 對答案',45,'numpy');
+add('12-05','py','Kaggle Pandas 第 1 課：讀寫資料。自己用 load() 讀進 WAGE1',40,'kpd');
+add('12-06','py','Kaggle Pandas 第 2 課：選取欄位與列。篩出 female == 1 的子樣本',40,'kpd');
+add('12-07','py','Kaggle Pandas 第 3 課：摘要函數。自己寫 describe() 和 corr()',40,'kpd');
+add('12-08','proj','期末報告：確認要求，讀資料、處理缺值、描述統計',60,'sm');
+add('12-09','proj','期末報告：跑主要迴歸，寫成 equation form',60,'sm');
+add('12-10','proj','期末報告：t 檢定、F 檢定與係數解讀',60,'sm');
+add('12-11','proj','期末報告：圖表與文字（今天計量期末考，考完再做）',45,'kviz');
+add('12-12','proj','期末報告：檢查樣本數、單位、結論是否說得通',45,'sm');
+add('12-13','py','寫一頁自己的 Python／NumPy／pandas 指令筆記',40,'sm');
+{let x=new Date(ds('12-14'));const e=new Date(ds('12-24'));while(x<=e){const k=md(x),t=new Date(ds(k));L.push({d:k,c:'exam',t:t<new Date(ds('12-21'))?'期末考前一週，不排練習':'期末考週，不排練習',m:0,r:''});x.setDate(x.getDate()+1)}}
+add('12-25','py','輕量小專案：用 list 和 dict 寫一個記帳小程式，輸入幾筆花費，印出各類別總額',30,'kpy');
+add('12-26','py','輕量小專案：用 pandas 讀 WAGE1，比較男女平均時薪、不同教育年數的平均時薪',40,'kpd');
+add('12-27','excel','輕量小專案：把昨天的結果貼進 Excel，做成表格加一張長條圖（Excel 暖身）',30,'excel');
+add('12-28','excel','Excel：打開 WAGE1，練 SUM、AVERAGE、COUNTIF',40,'wage');
+add('12-29','excel','Excel：IF、IFS、AND / OR，幫資料加一個分類欄',40,'exceljet');
+add('12-30','excel','Excel：XLOOKUP，順便認識 VLOOKUP',40,'exceljet');
+add('12-31','excel','Excel：排序、篩選、條件式格式設定',30,'excel');
+add('01-01','excel','Excel：資料驗證與凍結窗格（元旦，輕鬆做）',20,'excel');
+add('01-02','excel','Excel：樞紐分析表與圖表。小任務：做出「教育年數 vs 平均薪資」',60,'excel');
+add('01-03','excel','驗收：不看教學，用 WAGE2 從零做一份樞紐分析加圖表',45,'wage');
+add('01-04','py','Kaggle Pandas 第 4 課：groupby 分組與排序',45,'kpd');
+add('01-05','py','Kaggle Pandas 第 5 課：資料型別與缺值',40,'kpd');
+add('01-06','py','Kaggle Pandas 第 6 課：改名與合併表格',40,'kpd');
+add('01-07','pbi','Power BI：安裝 Power BI Desktop，匯入 WAGE1',40,'pbistart');
+add('01-08','pbi','Power BI：用 Power Query 清理資料（改型別、刪欄、篩選）',45,'pbidocs');
+add('01-09','pbi','Power BI：建立視覺效果（長條、折線、交叉分析篩選器）',45,'pbidocs');
+add('01-10','pbi','Power BI：資料模型與基本 DAX（SUM、AVERAGE、CALCULATE）',50,'pbidocs');
+add('01-11','pbi','驗收：自己做一頁「薪資與教育」儀表板',60,'pbidocs');
+add('01-12','sql','SQLBolt 第 1–2 課：SELECT、WHERE',30,'sqlbolt');
+add('01-13','sql','SQLBolt 第 3–4 課：文字條件、ORDER BY',30,'sqlbolt');
+add('01-14','sql','SQLBolt 第 5 課：綜合複習',25,'sqlbolt');
+add('01-15','sql','SQLBolt 第 6–7 課：JOIN、OUTER JOIN',40,'sqlbolt');
+add('01-16','sql','SQLBolt 第 8–9 課：NULL、在查詢裡計算',35,'sqlbolt');
+add('01-17','sql','SQLBolt 第 10–11 課：聚合函數、GROUP BY',40,'sqlbolt');
+add('01-18','sql','SQLBolt 第 12 課，再不看答案寫一題 JOIN、一題 GROUP BY',40,'sqlbolt');
+add('01-19','py','驗收：不看原程式，自己重寫 C3_C5',60,'hw');
+add('01-20','py','驗收：自己重寫 C4_C5 的 F 檢定',60,'hw');
+add('01-21','viz','Kaggle 資料視覺化第 1–2 課：折線圖、長條圖',50,'kviz');
+add('01-22','viz','Kaggle 資料視覺化第 3–4 課：熱圖、散布圖',50,'kviz');
+add('01-23','proj','選作品專案題目，到開放資料平臺找資料',60,'datagov');
+add('01-24','proj','下載資料，用 pandas 讀進來，看懂每個欄位',60,'datagov');
+add('01-25','proj','清理資料：缺值、型別、欄位改名',60,'kpd');
+add('01-26','proj','清理資料：用 merge 合併兩張以上的表',60,'kpd');
+add('01-27','proj','專案：描述統計加 3 張重點圖',60,'kviz');
+add('01-28','proj','專案：提出假設，跑第一個迴歸',60,'sm');
+add('01-29','proj','專案：加入控制變數，比較模型',60,'sm');
+add('01-30','proj','專案：解讀係數，用白話寫結論和建議',60);
+add('01-31','proj','專案：整理成報告（問題、資料、發現、建議）',60);
+add('02-01','pbi','專案：用 Power BI 做一頁儀表板版本',60,'pbidocs');
+add('02-02','proj','把專案 notebook、儀表板截圖整理進 projects/，寫專案 README，push 到 GitHub',60,'github');
+add('02-03','sql','LeetCode SQL 50：2 題 Select 類',25,'leetcode');
+add('02-04','excel','春節輕量版：複習 XLOOKUP',20,'exceljet');
+add('02-05','np','春節輕量版：NumPy 複習，不看筆記重算一次平均和標準差',20,'numpy');
+add('02-06','job','春節輕量版：寫 1 分鐘自我介紹草稿',20);
+add('02-07','sql','春節輕量版：LeetCode SQL 1 題',15,'leetcode');
+add('02-08','job','春節輕量版：想好「為什麼想做數據分析」',20);
+add('02-09','pbi','春節輕量版：Power BI 改一個視覺效果',20,'pbidocs');
+add('02-10','sql','春節輕量版：LeetCode SQL 1 題',15,'leetcode');
+add('02-11','proj','專案：請朋友或 Claude 看一遍，依意見修改',45);
+add('02-12','job','整理實習清單：各公司去年開放時間與條件',45,'job104');
+add('02-13','job','寫一頁履歷初稿',60);
+add('02-14','job','履歷：用 STAR 寫專案經歷',45);
+add('02-15','job','履歷：加入 PR 團隊經驗與相關課程',40);
+add('02-16','job','預約職涯中心，或請學長姐看履歷',20);
+add('02-17','sql','LeetCode SQL 50：2 題 JOIN 類',25,'leetcode');
+add('02-18','job','查各公司開放狀況，已開放的就投',30,'job104');
+add('02-19','job','（選做）英文履歷',45);
+add('02-20','job','面試準備：1 分鐘自我介紹，錄音聽一次',30);
+add('02-21','job','面試準備：練講「為什麼想做數據分析」',30);
+add('02-22','sql','LeetCode SQL 50：2 題聚合類',25,'leetcode');
+add('02-23','job','投遞，並記錄每家的進度',30,'job104');
+add('02-24','job','練習 3 分鐘講完你的專案',30);
+add('02-25','job','面試觀念：用白話解釋迴歸係數',30);
+add('02-26','pbi','Power BI 複習：DAX',30,'pbidocs');
+add('02-27','job','模擬面試',40);
+add('02-28','sql','LeetCode SQL 50：2 題',25,'leetcode');
+const IQ=['用白話解釋 p 值','說明為什麼薪資要取 log','說明 F 檢定在檢驗什麼','說明相關不等於因果','說明遺漏變數偏誤'];
+const XR=[['pbi','Power BI：做一頁新儀表板'],['excel','Excel 複習：XLOOKUP'],['pbi','Power BI 複習：DAX'],['excel','Excel 複習：樞紐分析'],['pbi','Power BI 複習：Power Query']];
+for(let d=1;d<=31;d++){const k='03-'+String(d).padStart(2,'0'),w=new Date(ds(k)).getDay(),wk=Math.floor((d-1)/7);
+  if(k==='03-19')add(k,'job','政大實體徵才博覽會：帶履歷去逛，記下有數據職缺的公司，回來追蹤投遞',60,'job104');
+  else if(w===1)add(k,'job','看新職缺，已開放的就投（多數 3 月底到 4 月初截止）',30,'job104');
+  else if(w===2)add(k,'sql','LeetCode SQL 50：2 題',25,'leetcode');
+  else if(w===3)add(k,'job','面試觀念：'+IQ[wk%5],30);
+  else if(w===4)add(k,XR[wk%5][0],XR[wk%5][1],30,XR[wk%5][0]==='pbi'?'pbidocs':'exceljet');
+  else if(w===5)add(k,'job','投遞，並追蹤進度',30,'job104');
+  else if(w===6)add(k,'job','模擬面試，或改進專案一個地方',40);
+  else add(k,'job','整理這週投遞進度，排下週要投的公司',20,'job104');}
+L.sort((a,b)=>ds(a.d)<ds(b.d)?-1:1);
+const PH=[
+  {n:'學期中：Python 銜接計量',s:'每天 20–60 分鐘。先學 Python、NumPy 和 pandas，12 月上旬做計量期末報告。12/14–12/24 是學校期末考前一週和期末考週，不排練習；考完的 12/25–12/27 做輕量小專案。',a:'11-24',b:'12-27'},
+  {n:'寒假前段：Excel、Power BI、SQL 與驗收',s:'每天 25–60 分鐘。Excel → pandas 收尾 → Power BI → SQL，再不看程式自己重寫計量作業，最後學視覺化。',a:'12-28',b:'01-22'},
+  {n:'寒假後段：作品專案與履歷',s:'用自己寫的程式完成一個分析專案，再寫履歷。春節期間改成每天 15–20 分鐘的輕量版。',a:'01-23',b:'02-14'},
+  {n:'開學後：投遞與面試',s:'每天 20–40 分鐘。開放就投，不要等截止日。3/2–3/26 是政大校園徵才月，3/19（五）有實體徵才博覽會。',a:'02-15',b:'03-31'}];
+const ECON={'11-27':'計量上課。手寫作業 3 昨晚截止，確認有上傳；問清楚期末報告的題目、格式、截止日','12-04':'計量上課。期末考前最後一堂，不懂的觀念今天問','12-11':'計量期末考，加油'};
+const WD='日一二三四五六';
+let done={};try{done=JSON.parse(localStorage.getItem('dap-done')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('dap-done',JSON.stringify(done))}catch(e){}};
+const now=new Date();now.setHours(0,0,0,0);
+const tk=md(now),first=new Date(ds(L[0].d)),last=new Date(ds(L[L.length-1].d));
+const todayKey=now<first?L[0].d:now>last?L[L.length-1].d:tk;
+const OFF=c=>c==='rest'||c==='exam';const tasks=L.filter(x=>!OFF(x.c));
+const CK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+const rlink=r=>{const o=RES[r];if(!o)return '';return o.u?`<a class="rs" href="${o.u}" target="_blank" rel="noopener">${o.n} ↗</a>`:`<span class="rs" style="color:var(--mute)">${o.n}</span>`};
+const dlabel=x=>{const t=new Date(ds(x.d));return `${t.getMonth()+1}/${t.getDate()}<small>${WD[t.getDay()]}</small>`};
+function legend(){document.getElementById('legend').innerHTML=Object.entries(CAT).filter(([k])=>k!=='rest').map(([,c])=>`<span style="--c:${c.c}">${c.n}</span>`).join('')+'<span style="--c:var(--hl)">今天</span><span style="--c:var(--band)">黑框＝計量上課／考試</span>'}
+function grid(){
+  const start=new Date(first);start.setDate(start.getDate()-((start.getDay()+6)%7));
+  const weeks=Math.ceil(((last-start)/864e5+1)/7);
+  const cal=document.getElementById('cal'),mo=document.getElementById('months');
+  cal.style.setProperty('--w',weeks);mo.style.setProperty('--w',weeks);
+  const map={};L.forEach(x=>map[x.d]=x);
+  let h='',m='<span></span>';
+  '一二三四五六日'.split('').forEach((w,i)=>h+=`<span class="wd" style="grid-row:${i+1};grid-column:1">${i%2?'':w}</span>`);
+  for(let w=0;w<weeks;w++){let lab='';for(let i=0;i<7;i++){const t=new Date(start);t.setDate(t.getDate()+w*7+i);const k=md(t),x=map[k];
+      if(t.getDate()===1||(w===0&&i===0))lab=(t.getMonth()+1)+'月';
+      if(!x||t<first||t>last){h+=`<span style="grid-row:${i+1};grid-column:${w+2}"></span>`;continue}
+      const cls=['cell',x.c==='rest'?'rest':'',x.c==='exam'?'exam':'',done[k]?'done':'',k===todayKey?'today':'',ECON[k]?'fri':''].join(' ');
+      h+=`<button class="${cls}" style="grid-row:${i+1};grid-column:${w+2};--c:${CAT[x.c].c}" data-k="${k}" title="${t.getMonth()+1}/${t.getDate()} ${x.t}" aria-label="${t.getMonth()+1}月${t.getDate()}日：${x.t}"></button>`}
+    m+=`<span>${lab}</span>`}
+  cal.innerHTML=h;mo.innerHTML=m;
+}
+function todayCard(){
+  const x=L.find(y=>y.d===todayKey),c=CAT[x.c],t=new Date(ds(x.d));
+  const lead=now<first?'計畫從這天開始':now>last?'計畫最後一天':'今天';
+  const r=RES[x.r];
+  document.getElementById('todayCard').innerHTML=`<div class="d">${t.getMonth()+1}/${t.getDate()}<small>${lead}・星期${WD[t.getDay()]}</small></div>
+  <div><span class="tag ${x.c==='job'?'job':''}" style="--c:${c.c}${x.c==='rest'?';color:var(--ink)':''}">${c.n}</span>
+  <h2>${x.t}</h2>${ECON[x.d]?`<div class="enote">${ECON[x.d]}</div>`:''}<div style="color:var(--mute)">${x.m?'約 '+x.m+' 分鐘':'今天不用練'}${r?'・'+r.note:''}</div></div>
+  <div class="acts">${r&&r.u?`<a class="btn" href="${r.u}" target="_blank" rel="noopener">去 ${r.n} 學 ↗</a>`:''}${!OFF(x.c)?`<button class="btn ${done[x.d]?'on':''}" data-k="${x.d}" id="tbtn">${done[x.d]?'已完成 ✓':'標記完成'}</button>`:''}</div>`;
+}
+function list(){
+  document.getElementById('phases').innerHTML=PH.map(p=>{
+    const ds_=L.filter(x=>ds(x.d)>=ds(p.a)&&ds(x.d)<=ds(p.b)),tt=ds_.filter(x=>!OFF(x.c)),dn=tt.filter(x=>done[x.d]).length;
+    return `<section class="ph"><h3>${p.n}</h3><p class="sub">${p.s}　完成 ${dn} / ${tt.length}</p><div class="pbar"><i style="width:${tt.length?dn/tt.length*100:0}%"></i></div><ol class="days">${ds_.map(x=>{
+      const c=CAT[x.c],r=OFF(x.c);
+      return `<li class="day ${r?'r':''} ${done[x.d]?'ok':''} ${x.d===todayKey?'now':''}" ${x.d===todayKey?'id="now"':''} style="--c:${c.c}">
+      <span class="dt">${dlabel(x)}</span>${r?'<span></span>':`<button class="ck ${done[x.d]?'on':''}" data-k="${x.d}" aria-label="完成：${x.t}" aria-pressed="${!!done[x.d]}">${CK}</button>`}
+      <span class="tx">${ECON[x.d]?`<span class="tag econ">${x.d==='12-11'?'計量期末考':'計量上課'}</span>`:''}<span class="tt">${x.t}</span>${x.m?`<span class="min">${x.m} 分</span>`:''}</span>${rlink(x.r)}</li>`}).join('')}</ol></section>`}).join('');
+}
+function score(){const n=tasks.filter(x=>done[x.d]).length,p=Math.round(n/tasks.length*100);
+  document.getElementById('pct').textContent=p+'%';document.getElementById('cnt').textContent=`完成 ${n} / ${tasks.length} 個任務`;document.getElementById('meter').style.width=p+'%'}
+function resources(){const g={};Object.values(RES).forEach(r=>(g[r.cat]=g[r.cat]||[]).push(r));
+  document.getElementById('res').innerHTML=Object.keys(g).map(k=>`<div class="rc" style="--c:${CAT[k].c}"><h4>${CAT[k].n}</h4><ul>${g[k].map(r=>`<li>${r.u?`<a href="${r.u}" target="_blank" rel="noopener"><b>${r.n}</b> ↗</a>`:`<b>${r.n}</b>`}<br><span style="color:var(--mute);font-size:15px">${r.note}</span></li>`).join('')}</ul></div>`).join('')}
+function render(){grid();todayCard();list();score()}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.ck,#tbtn');
+  if(b){const k=b.dataset.k;if(done[k])delete done[k];else done[k]=1;save();render();return}
+  const c=e.target.closest('.cell');
+  if(c){const li=document.querySelector(`.ck[data-k="${c.dataset.k}"]`)||[...document.querySelectorAll('.dt')].find(()=>false);
+    const row=li?li.closest('.day'):null;if(row){document.getElementById('hideRest').checked=false;document.getElementById('listWrap').classList.remove('hide-rest');row.scrollIntoView({behavior:'smooth',block:'center'})}}
+});
+const hr=document.getElementById('hideRest');
+try{hr.checked=localStorage.getItem('dap-hide')==='1'}catch(e){}
+document.getElementById('listWrap').classList.toggle('hide-rest',hr.checked);
+hr.addEventListener('change',()=>{document.getElementById('listWrap').classList.toggle('hide-rest',hr.checked);try{localStorage.setItem('dap-hide',hr.checked?'1':'0')}catch(e){}});
+const sty=v=>{if(v)document.documentElement.dataset.style=v;else delete document.documentElement.dataset.style;document.querySelectorAll('.sty button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===v));try{localStorage.setItem('dap-style',v)}catch(e){}};
+document.querySelectorAll('.sty button').forEach(b=>b.addEventListener('click',()=>sty(b.dataset.s)));
+let sv='';try{sv=localStorage.getItem('dap-style')||''}catch(e){}
+sty(sv);
+legend();resources();render();
+}
+</script>
+</body>
+</html>
